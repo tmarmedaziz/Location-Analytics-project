@@ -1,7 +1,7 @@
 # Spatial data infrastructure
 
 In the context of Web development technologies for spatial data infrastructures, this project is done.
-![image](https://ibb.co/WvqNDdZ)
+[![image](https://www.linkpicture.com/q/demo-tb.png)](https://www.linkpicture.com/view.php?img=LPic63b76f18c1522357636697)
 ## Prerequisites
 Having Geoserver and MongoDB installed and having the initial setup
 
