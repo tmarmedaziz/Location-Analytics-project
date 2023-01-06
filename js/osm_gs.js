@@ -127,36 +127,6 @@ map.on('singleclick', function (evt) {
 });
 
 
-// On click just display the coordinates
-// var onSingleClick = function (evt) {
-//     var coord = evt.coordinate;
-//     var other_coord = ol.proj.transform(coord, 'EPSG:3857', 'EPSG:4326');
-//     console.log('EPSG:3857 ', coord, 'EPSG:4326 ', other_coord);
-// }
-
-
-
-
-
-
-
-// On popup 
-// var onSingleClick = function(evt) {
-//     var coord = evt.coordinate;
-//     console.log(coord);
-//     var coord_wgs84 = ol.proj.toLonLat(coord);
-//     var str = ol.coordinate.toStringXY(coord_wgs84,6);
-//     if(str) {
-//     str = '<p>' + str + '</p>';
-//     overlayPopup.setPosition(coord);
-//     content.innerHTML = str;
-//     container.style.display = 'block';
-//     }
-//     else{
-//     container.style.display = '';
-//     closer.blur();
-//     }
-//    }
 
 // Display on the popup 
 var clicked_coord;
@@ -291,31 +261,6 @@ var saveVectorLayer = new ol.layer.Vector({
 map.addLayer(saveVectorLayer);
 
 
-// var import_id;
-// $.ajax("http://127.0.0.1:5000/",
-//     { dataType: 'json' }
-// ).done(function (data) {
-
-//     console.log(data);
-//     import_id = data._id;
-//     console.log("-----------------id---------------------------");
-//     console.log(import_id);
-//     console.log("-----------------id---------------------------");
-
-   
-//     _geojson_vectorSource = new ol.source.Vector({
-//         features: (new ol.format.GeoJSON()).readFeatures(data, { featureProjection: 'EPSG:3857' })
-//       });
-      
-//       _geojson_vectorLayer = new ol.layer.Vector({
-//         source: _geojson_vectorSource,
-//         style: style
-//       });
-      
-//       map.addLayer(_geojson_vectorLayer);
-
-// });
-
 
 var import_id;
 
@@ -328,7 +273,6 @@ $('div.btn-group button').on('click', function (event) {
     button = $('#' + id).button('toggle');
     // Remove previous interaction
     map.removeInteraction(interaction);
-    // Update active interaction
     switch (event.target.id) {
         case "select":
             interaction = new ol.interaction.Select();
@@ -355,22 +299,6 @@ $('div.btn-group button').on('click', function (event) {
                 source: saveVectorLayer.getSource()
             });
             map.addInteraction(interaction);
-            interaction.on('drawend', function(evt) { 
-                // console.log(evt);
-                // console.log("-----------------add---------------------------");
-                // console.log(evt.feature.getGeometry().getCoordinates());
-                var format = new ol.format.GeoJSON({ featureProjection: 'EPSG:3857' });
-                var feature = evt.feature;
-                var features = saveVectorLayer.getSource().getFeatures();
-                features = features.concat(feature);
-                var json = format.writeFeatures(features);
-
-                // console.log("----------------------json-------------------------------");
-                // console.log(saveVectorLayer.getSource().getFeatures());
-                // console.log("----------------------json-------------------------------");
-                
-
-              });
             break;
         case "modify":
             interaction = new ol.interaction.Modify({
@@ -378,9 +306,6 @@ $('div.btn-group button').on('click', function (event) {
             });
             map.addInteraction(interaction);
             interaction.on('modifyend', function(evt) { 
-                // console.log("------------------------modify---------------------------");
-                // console.log(evt.features.item(0).getGeometry().getCoordinates());
-                // console.log("------------------------------------------------------------");
 
               });
             break;
@@ -388,14 +313,7 @@ $('div.btn-group button').on('click', function (event) {
             $.ajax("http://127.0.0.1:5000/",
                 { dataType: 'json' }
             ).done(function (data) {
-
-                // console.log(data);
                 import_id = data._id;
-                // console.log("-----------------id---------------------------");
-                // console.log(import_id);
-                // console.log("-----------------id---------------------------");
-
-            
                 _geojson_vectorSource = new ol.source.Vector({
                     features: (new ol.format.GeoJSON()).readFeatures(data, { featureProjection: 'EPSG:3857' })
                 });
@@ -417,16 +335,13 @@ $('div.btn-group button').on('click', function (event) {
             break;
         
         case "save":
-            // console.log("save");
             var format = new ol.format.GeoJSON({ featureProjection: 'EPSG:3857' });
             feats = saveVectorLayer.getSource().getFeatures();
             _geojson_vectorLayer.getSource().addFeatures(feats);
             var features = _geojson_vectorLayer.getSource().getFeatures();
             var json = JSON.parse(format.writeFeatures(features));
             json._id = import_id
-            // console.log("------------------------------***********-------------------------");
-            // console.log(json);
-            // console.log("------------------------------***********-------------------------");
+      
 
             $.ajax({
                 url: 'http://127.0.0.1:5000/update',
@@ -451,19 +366,12 @@ $('div.btn-group button').on('click', function (event) {
     }
 });
 
-// console.log("---------------------------Final---------------------------------");
-var format = new ol.format.GeoJSON({ featureProjection: 'EPSG:3857' });
-var features = saveVectorLayer.getSource().getFeatures();
-var json = format.writeFeatures(features);
-// console.log(json);
-// console.log("----------------------------Final--------------------------------");
 
 
 
 function displayGeoJson() {
     var features = saveVectorLayer.getSource().getFeatures();
     var json = format.writeFeatures(features);
-    // console.log(json);
 }
 
 
@@ -487,13 +395,10 @@ var marker = new ol.Overlay({
 });
 map.addOverlay(marker);
 geolocation.on('change:position', function () { //real time tracking
-    // map.getView().setCenter(geolocation.getPosition());
-    // map.getView().setZoom(15);
     marker.setPosition(geolocation.getPosition());
 });
 
 function zoomToMyPosition() {
-    // console.log("heyooooo");
 
    
     map.getView().setCenter(geolocation.getPosition());
@@ -507,45 +412,3 @@ function goToFullExtent() {
     map.getView().setZoom(0);
 
 }
-
-
-
-
-// //Geolocation
-// var geolocation = new ol.Geolocation({
-//     projection: map.getView().getProjection(),
-//     tracking: true
-// });
-// var marker = new ol.Overlay({
-//     element: document.getElementById('location'),
-//     positioning: 'center-center'
-// });
-// map.addOverlay(marker);
-// geolocation.on('change:position', function () { //real time tracking
-//     map.getView().setCenter(geolocation.getPosition());
-//     map.getView().setZoom(15);
-//     marker.setPosition(geolocation.getPosition());
-// });
-
-// import { Client } from 'pg';
-// const Client = require('pg');
-// const conString = "postgres://postgres:geoserver@127.0.0.1:5432/tun_gs";
-// const client = new Client(conString);
-// client.connect();
-// const query = `SELECT * FROM clients_utm`;
-
-// let labelsFromDb = [];
-
-// client.query(query, (err, res) => {
-//     if (err) {
-//         console.error(err);
-//         return;
-//     }
-//     for (let row of res.rows) {
-//         labelsFromDb.push(row);
-//     }
-//     for (let row of labelsFromDb) {
-//         console.log(row);
-//     }
-//     client.end();
-// });

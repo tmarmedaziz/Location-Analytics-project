@@ -24,7 +24,6 @@ CORS(app)
 
 @app.route('/', methods=['GET'])
 def index():
-    _list = ()
     element = mycol.find_one()
 
     return element
@@ -44,16 +43,12 @@ def update():
              {"$set":
                  record
              })
-    # record = {"_id": ObjectId( record.pop('_id', None)),   record}
-    # record["_id"] = ObjectId( record['_id'])
-    # mycol.insert_one(record)
 
     return str(result.modified_count)
 
 @app.route('/delete', methods=['DELETE'])
 def delete():
     record = json.loads(request.data)
-
     mycol.delete_one(record)
 
 
